@@ -35,7 +35,9 @@ tmp/**
 test-results*.xml
 xunit-test-results.xml
 build/ci/performance/performance-results.json
-!build/
+build/
+dist/
+ibpm_api_client.egg-info/
 debug*.log
 debugpy*.log
 pydevd*.log
