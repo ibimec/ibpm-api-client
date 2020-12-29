@@ -1,5 +1,8 @@
 import requests
 import jsons
+import base64
+import io
+from PIL import Image
 from .responses import *
 
 class IbpmClient:
@@ -29,11 +32,22 @@ class IbpmClient:
         return jsons.load(resp, createNewProcessResponse)
 
     def execTask(self, model=None, documentName=None, instanceId=None, activity=None, comments=None) -> ibpmResponse:
-        resp = self._req("execTask", documentName=documentName, instanceId=instanceId, activity=activity, comments=comments)
+        resp = self._req("execTask", model=model, documentName=documentName, instanceId=instanceId, activity=activity, comments=comments)
         return jsons.load(resp, ibpmResponse)
 
     def updateProcess(self, model=None, documentName=None, instanceId=None, variables=None, resetGroups=None, state=None) -> ibpmResponse:
-        resp = self._req("updateProcess", documentName=documentName, instanceId=instanceId, variables=variables, resetGroups=resetGroups, state=state)
+        resp = self._req("updateProcess", model=model, documentName=documentName, instanceId=instanceId, variables=variables, resetGroups=resetGroups, state=state)
         return jsons.load(resp, ibpmResponse)
 
+    def getProcess(self, model=None, documentName=None, instanceId=None, includeVariables=None, includeGraph=None) -> getProcessResponse:
+        resp = self._req("getProcess", model=model, documentName=documentName, instanceId=instanceId, includeVariables=includeVariables, includeGraph=includeGraph)
+        proc = jsons.load(resp, getProcessResponse)
+
+        #decode graph from png/base64 into PIL image
+        if proc.graph != "" and proc.graph != None:
+            img_bytes = base64.b64decode(proc.graph)
+            img_buf = io.BytesIO(img_bytes)
+            proc.graph = Image.open(img_buf)
+        return proc
+            
         

@@ -1,25 +1,12 @@
 import ibpm
 
-client = ibpm.client('https://az.ibimec.it')
-client.authorizationToken = "XALKDJASKLDJIWLAKSDJ"
-client.userName = "rgallini"
+client = ibpm.client('http://localhost:56338')
+client.authorizationToken = "JBBVFNWXOSSSEVVPPXOPUVECFBPJRUWBIRPFGKVGDTYRJSBQMUP"
+client.userName = "ADMIN"
 
-vars = {
-    "a": 1,
-    "b": 2,
-    "list": [
-        {
-            "x":1,
-            "y":2
-        },
-        {
-            "x":12,
-            "y":11
-        }
-    ]
-}
 
-r = client.createNewProcess("APPROVAZIONE", vars)
-n = r.documentName
+r = client.getProcess(model='RICHIESTE OFFERTA', documentName='2020 55.1', includeGraph=True)
+
+r.graph.show()
 
 print(r)   
