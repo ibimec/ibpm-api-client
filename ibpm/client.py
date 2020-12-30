@@ -27,21 +27,21 @@ class IbpmClient:
         return resp.json()
 
 
-    def createNewProcess(self, model, variables, startObject=None) -> createNewProcessResponse:
+    def createNewProcess(self, model, variables, startObject=None) -> CreateNewProcessResponse:
         resp = self._req("createNewProcess", model=model, variables=variables, startObject=startObject)
-        return jsons.load(resp, createNewProcessResponse)
+        return jsons.load(resp, CreateNewProcessResponse)
 
-    def execTask(self, model=None, documentName=None, instanceId=None, activity=None, comments=None) -> ibpmResponse:
+    def execTask(self, model=None, documentName=None, instanceId=None, activity=None, comments=None) -> IbpmResponse:
         resp = self._req("execTask", model=model, documentName=documentName, instanceId=instanceId, activity=activity, comments=comments)
-        return jsons.load(resp, ibpmResponse)
+        return jsons.load(resp, IbpmResponse)
 
-    def updateProcess(self, model=None, documentName=None, instanceId=None, variables=None, resetGroups=None, state=None) -> ibpmResponse:
+    def updateProcess(self, model=None, documentName=None, instanceId=None, variables=None, resetGroups=None, state=None) -> IbpmResponse:
         resp = self._req("updateProcess", model=model, documentName=documentName, instanceId=instanceId, variables=variables, resetGroups=resetGroups, state=state)
-        return jsons.load(resp, ibpmResponse)
+        return jsons.load(resp, IbpmResponse)
 
-    def getProcess(self, model=None, documentName=None, instanceId=None, includeVariables=None, includeGraph=None) -> getProcessResponse:
+    def getProcess(self, model=None, documentName=None, instanceId=None, includeVariables=None, includeGraph=None) -> GetProcessResponse:
         resp = self._req("getProcess", model=model, documentName=documentName, instanceId=instanceId, includeVariables=includeVariables, includeGraph=includeGraph)
-        proc = jsons.load(resp, getProcessResponse)
+        proc = jsons.load(resp, GetProcessResponse)
 
         #decode graph from png/base64 into PIL image
         if proc.graph != "" and proc.graph != None:
