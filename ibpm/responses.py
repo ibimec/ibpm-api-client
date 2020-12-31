@@ -1,65 +1,64 @@
-from typing import List
-from typing import Optional
+from typing import List, Dict, Optional, Any
+from dataclasses import dataclass
 
-
+@dataclass
 class IbpmResponse:
-    def __init__(self, result, message):
-        self.result = result
-        self.message = message
+    result: str
+    message: Optional[str]
 
 
+@dataclass
 class CreateNewProcessResponse(IbpmResponse):
-    def __init__(self, result, message, documentName, instanceId):
-        super().__init__(result, message)
-        self.documentName = documentName
-        self.instanceId = instanceId
+    documentName: str
+    instanceId: str
 
 
+@dataclass
 class User:
-    def __init__(self, userName):
-        self.userName = userName
+    userName: str
 
     def __str__(self):
         return self.userName
 
-
+@dataclass
 class Task:
-    def __init__(self, activity, activityDescription, userName, assignedUsers: List[User]):
-        self.activity = activity
-        self.activityDescription = activityDescription
-        self.userName = userName
-        self.assignedUsers = assignedUsers
-
+    activity: str
+    activityDescription: str
+    userName: str
+    assignedUsers: Optional[List[User]]
+    
     def __str__(self):
         return self.activityDescription
 
 
+@dataclass
 class LinkedProcess:
-    def __init__(self, model, documentName, documentDescription, instanceId):
-        self.model = model
-        self.documentName = documentName
-        self.documentDescription = documentDescription
-        self.instanceId = instanceId
+    model: str
+    documentName: str
+    documentDescription: str
+    instanceId: str
 
     def __str__(self):
         return f"{self.model}:{self.documentName}"
 
 
+@dataclass
 class Process(IbpmResponse):
-    def __init__(self, result, message, model, documentName, documentDescription, instanceId, activeTasks: Optional[List[Task]], links: Optional[List[LinkedProcess]], variables, state, graph):
-        super().__init__(result, message)
-        self.model = model
-        self.documentName = documentName
-        self.documentDescription = documentDescription
-        self.instanceId = instanceId
-        self.activeTasks = activeTasks
-        self.links = links
-        self.variables = variables
-        self.state = state
-        self.graph = graph
+    #def __init__(self, result, message, model, documentName, documentDescription, instanceId, activeTasks: Optional[List[Task]], links: Optional[List[LinkedProcess]], variables, state, graph):
+        
+    model: str
+    documentName: str
+    documentDescription: str
+    instanceId: str
+    activeTasks: Optional[List[Task]]
+    links: Optional[List[LinkedProcess]]
+    variables: Optional[Dict]
+    state = str
+    graph: Any
 
     def __str__(self):
         return f"{self.model}:{self.documentName} @ {self.activeTasks[0].activityDescription}"
+
 
 def boolNull(x) -> bool:
     if x is None:
@@ -67,30 +66,27 @@ def boolNull(x) -> bool:
     else:
         return x
 
+@dataclass
 class VariableBase:
-    def __init__(self, availableValues: Optional[List], propertyName, propertyType, variableType, description, required, readOnly, hasDefault):
-        self.availableValues = availableValues
-        self.propertyName = propertyName
-        self.propertyType = propertyType
-        self.variableType = variableType
-        self.description = description
-        self.required = boolNull(required)
-        self.readOnly = boolNull(readOnly)
-        self.hasDefault = boolNull(hasDefault)
+    availableValues: Optional[List]
+    propertyName: str
+    propertyType: str
+    variableType: Optional[str]
+    description: str
+    required: Optional[bool]
+    readOnly: Optional[bool]
+    hasDefault: Optional[bool]
 
     def __str__(self):
         return f'{self.propertyName}: {self.propertyType}'
+
         
-
+@dataclass
 class Variable(VariableBase):
-    def __init__(self, availableValues: Optional[List], propertyName, propertyType, variableType, description, required, readOnly, hasDefault, subProperties: Optional[List[VariableBase]]):
-        super().__init__(availableValues, propertyName, propertyType, variableType, description, required, readOnly, hasDefault)
-        self.subProperties = subProperties
+    subProperties: Optional[List[VariableBase]]
 
 
+@dataclass
 class Schema(IbpmResponse):
-    def __init__(self, result, message, activity, properties: List[Variable]):
-        super().__init__(result, message)
-        self.activity = activity
-        self.properties = properties
-
+    activity: str
+    properties: Optional[List[Variable]]
