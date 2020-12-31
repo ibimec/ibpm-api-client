@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="ibpm-api-client",
-    version="0.1.1",
+    version="0.1.2",
     description="ibpm web api client",
     url="https://github.com/ibimec/ibpm-api-client",
     author="rgallini",
