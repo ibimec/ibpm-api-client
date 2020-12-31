@@ -1,4 +1,6 @@
 from typing import List
+from typing import Optional
+
 
 class IbpmResponse:
     def __init__(self, result, message):
@@ -12,12 +14,14 @@ class CreateNewProcessResponse(IbpmResponse):
         self.documentName = documentName
         self.instanceId = instanceId
 
+
 class User:
     def __init__(self, userName):
         self.userName = userName
 
     def __str__(self):
         return self.userName
+
 
 class Task:
     def __init__(self, activity, activityDescription, userName, assignedUsers: List[User]):
@@ -29,6 +33,7 @@ class Task:
     def __str__(self):
         return self.activityDescription
 
+
 class LinkedProcess:
     def __init__(self, model, documentName, documentDescription, instanceId):
         self.model = model
@@ -39,8 +44,9 @@ class LinkedProcess:
     def __str__(self):
         return f"{self.model}:{self.documentName}"
 
-class GetProcessResponse(IbpmResponse):
-    def __init__(self, result, message, model, documentName, documentDescription, instanceId, activeTasks: List[Task], links: List[LinkedProcess], variables, state, graph):
+
+class Process(IbpmResponse):
+    def __init__(self, result, message, model, documentName, documentDescription, instanceId, activeTasks: Optional[List[Task]], links: Optional[List[LinkedProcess]], variables, state, graph):
         super().__init__(result, message)
         self.model = model
         self.documentName = documentName
@@ -54,3 +60,37 @@ class GetProcessResponse(IbpmResponse):
 
     def __str__(self):
         return f"{self.model}:{self.documentName} @ {self.activeTasks[0].activityDescription}"
+
+def boolNull(x) -> bool:
+    if x is None:
+        return False
+    else:
+        return x
+
+class VariableBase:
+    def __init__(self, availableValues: Optional[List], propertyName, propertyType, variableType, description, required, readOnly, hasDefault):
+        self.availableValues = availableValues
+        self.propertyName = propertyName
+        self.propertyType = propertyType
+        self.variableType = variableType
+        self.description = description
+        self.required = boolNull(required)
+        self.readOnly = boolNull(readOnly)
+        self.hasDefault = boolNull(hasDefault)
+
+    def __str__(self):
+        return f'{self.propertyName}: {self.propertyType}'
+        
+
+class Variable(VariableBase):
+    def __init__(self, availableValues: Optional[List], propertyName, propertyType, variableType, description, required, readOnly, hasDefault, subProperties: Optional[List[VariableBase]]):
+        super().__init__(availableValues, propertyName, propertyType, variableType, description, required, readOnly, hasDefault)
+        self.subProperties = subProperties
+
+
+class Schema(IbpmResponse):
+    def __init__(self, result, message, activity, properties: List[Variable]):
+        super().__init__(result, message)
+        self.activity = activity
+        self.properties = properties
+

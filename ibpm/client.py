@@ -39,9 +39,9 @@ class IbpmClient:
         resp = self._req("updateProcess", model=model, documentName=documentName, instanceId=instanceId, variables=variables, resetGroups=resetGroups, state=state)
         return jsons.load(resp, IbpmResponse)
 
-    def getProcess(self, model=None, documentName=None, instanceId=None, includeVariables=None, includeGraph=None) -> GetProcessResponse:
+    def getProcess(self, model=None, documentName=None, instanceId=None, includeVariables=None, includeGraph=None) -> Process:
         resp = self._req("getProcess", model=model, documentName=documentName, instanceId=instanceId, includeVariables=includeVariables, includeGraph=includeGraph)
-        proc = jsons.load(resp, GetProcessResponse)
+        proc = jsons.load(resp, Process)
 
         #decode graph from png/base64 into PIL image
         if proc.graph != "" and proc.graph != None:
@@ -49,5 +49,13 @@ class IbpmClient:
             img_buf = io.BytesIO(img_bytes)
             proc.graph = Image.open(img_buf)
         return proc
-            
+
+    def getSchema(self, modelName=None, activityName=None) -> Schema:
+        resp = self._req("getSchema", modelName=modelName, activityName=activityName)
+        schema = jsons.load(resp, Schema)
+        return schema
+
+    def getVersion(self):
+        resp = self._req("getVersion") 
+        return resp
         
